@@ -7,7 +7,7 @@ contract ABACSC {
     mapping (address => uint) public userId;
     User[] public users;
 
-    event UserAdd(address UserAddress, string UserAttributes, string UserNotes);
+    event UserAdd(address UserAddress, string UserAttributes, string UserNotes, string UserDigest);
     event UserRemoved(address UserAddress);
     event StatusChanged(string Status);
 
@@ -15,6 +15,7 @@ contract ABACSC {
         address user;
         string attributes;
         string notes;
+	string digest;
         uint userSince;
     }
 
@@ -31,8 +32,8 @@ contract ABACSC {
     constructor (string enterOrganizationName) public {
         owner = msg.sender;
         status = true;
-        addUser(0, "", "");
-        addUser(owner, 'Creator and Owner of Smart Contract', "");
+        addUser(0, "", "","");
+        addUser(owner, 'Creator and Owner of Smart Contract', "","");
         numberOfUsers = 0;
     }
 
@@ -42,15 +43,15 @@ contract ABACSC {
         emit StatusChanged("Smart Contract Deactivated");
     }
 
-    function addUser(address userAddress, string userAttributes, string userNotes) onlyOwner public {
+    function addUser(address userAddress, string userAttributes, string userNotes, string userDigest) onlyOwner public {
         require(status = true);
         uint id = userId[userAddress];
         if (id == 0) {
             userId[userAddress] = users.length;
             id = users.length++;
         }
-        users[id] = User({user: userAddress, userSince: now, attributes:userAttributes, notes: userNotes});
-        emit UserAdd(userAddress, userAttributes, userNotes);
+        users[id] = User({user: userAddress, userSince: now, attributes:userAttributes, notes: userNotes, digest: userDigest});
+        emit UserAdd(userAddress, userAttributes, userNotes, userDigest);
         numberOfUsers++;
     }
 
